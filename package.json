@@ -4,24 +4,76 @@
   "main": "build/index.js",
   "license": "MIT",
   "scripts": {
-    "dev": "nodemon src/index.ts",
+    "dev": "cross-env NODE_ENV=development nodemon",
+    "start": "cross-env NODE_ENV=production node build/index.js",
+    "build": "run-p build:*",
+    "build:client": "cross-env NODE_ENV=production TARGET=client webpack",
+    "build:server": "cross-env NODE_ENV=production TARGET=server webpack",
     "prepare": "husky install",
-    "lint": "eslint . --ext .ts"
+    "lint": "eslint . --ext .ts",
+    "clean": "rimraf build"
   },
   "lint-staged": {
     "**/*": "prettier --write --ignore-unknown"
   },
+  "nodemonConfig": {
+    "ext": "ts tsx ejs",
+    "ignore": [
+      "**/*.(test|spec).(ts|js)"
+    ],
+    "watch": [
+      "src/server/**/*.ts",
+      "src/server/**/*.ejs"
+    ],
+    "exec": "cross-env TARGET=server webpack && node build/index.js"
+  },
   "devDependencies": {
+    "@babel/core": "^7.20.7",
+    "@babel/preset-env": "^7.20.2",
+    "@babel/preset-typescript": "^7.18.6",
+    "@types/ejs": "^3.1.1",
+    "@types/express": "^4.17.15",
     "@types/node": "^18.11.18",
+    "@types/webpack": "^5.28.0",
+    "@types/webpack-env": "^1.18.0",
+    "@types/webpack-hot-middleware": "^2.25.6",
     "@typescript-eslint/eslint-plugin": "^5.48.0",
     "@typescript-eslint/parser": "^5.48.0",
+    "babel-loader": "^9.1.0",
+    "circular-dependency-plugin": "^5.2.2",
+    "copy-webpack-plugin": "^11.0.0",
+    "cross-env": "^7.0.3",
+    "css-loader": "^6.7.3",
     "eslint": "^8.31.0",
     "eslint-config-prettier": "^8.6.0",
+    "fork-ts-checker-webpack-plugin": "^7.2.14",
     "husky": "^8.0.2",
     "lint-staged": "^13.1.0",
     "nodemon": "^2.0.20",
+    "npm-run-all": "^4.1.5",
+    "postcss": "^8.4.20",
     "prettier": "2.8.1",
+    "sass": "^1.57.1",
+    "sass-loader": "^13.2.0",
+    "style-loader": "^3.3.1",
     "ts-node": "^10.9.1",
-    "typescript": "^4.9.4"
+    "tsconfig-paths": "^4.1.2",
+    "tsconfig-paths-webpack-plugin": "^4.0.0",
+    "typescript": "^4.9.4",
+    "webpack-cli": "^5.0.1",
+    "webpack-merge": "^5.8.0",
+    "webpack-node-externals": "^3.0.0",
+    "webpackbar": "^5.0.2"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "ejs": "^3.1.8",
+    "envalid": "^7.3.1",
+    "express": "^4.18.2",
+    "glob": "^8.0.3",
+    "http-status-codes": "^2.2.0",
+    "webpack": "^5.75.0",
+    "webpack-dev-middleware": "^6.0.1",
+    "webpack-hot-middleware": "^2.25.3"
   }
 }
