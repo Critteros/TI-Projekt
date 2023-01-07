@@ -3,7 +3,14 @@
   <head>
     <%- include('../partials/meta/head', {title: 'title'}); %> <%- renderBundle('landing') %>
   </head>
-  <body class="container">
-    <p>Test</p>
+  <body>
+  <div id="root">
+    <%- include('../partials/molecules/navbar'); %>
+    <main>
+      <div class="canvas-wrapper">
+        <canvas></canvas>
+      </div>
+    </main>
+  </div>
   </body>
 </html>

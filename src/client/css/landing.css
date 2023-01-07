@@ -1,6 +1,27 @@
-@import './tailwind-colors.css';
-@import './reset.css';
+@import './nav.css';
+@import './styles.css';
 
-body {
-  background-color: var(--tw-color-blue-500);
+#root {
+  @apply h-screen;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.canvas-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+}
+
+canvas {
+  @apply border-white border-2 rounded-2xl;
+  @apply w-3/4 h-3/4;
+  @apply shadow-inner shadow-white;
 }

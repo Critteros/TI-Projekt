@@ -40,6 +40,9 @@ const clientConfigBase = {
               sourceMap: true,
             },
           },
+          {
+            loader: 'postcss-loader',
+          },
         ],
       },
     ],

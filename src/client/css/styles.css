@@ -1,0 +1,21 @@
+@import './tailwind.css';
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  @apply bg-black max-w-full h-screen;
+  max-height: 100vh;
+  min-height: 300px;
+  min-width: 600px;
+  font-family: 'Roboto', sans-serif;
+}
+
+.btn {
+  @apply bg-transparent hover:bg-blue-500 text-blue-700 border-2 border-white font-bold;
+  padding: 0.5em;
+  color: white;
+}
