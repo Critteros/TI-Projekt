@@ -23,5 +23,5 @@ main {
 canvas {
   @apply border-white border-2 rounded-2xl;
   @apply w-3/4 h-3/4;
-  @apply shadow-inner shadow-white;
+  @apply shadow-white;
 }

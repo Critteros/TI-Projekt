@@ -1,5 +1,9 @@
 import '../css/landing.css';
 import '@fontsource/roboto';
+import { getCanvas } from '@/client/selectors/landing';
+import Renderer from '@/client/Renderer';
 
-console.log('client cdoded! xd dddd dfff');
+const renderer = new Renderer(getCanvas());
+renderer.animate();
+
 export {};
