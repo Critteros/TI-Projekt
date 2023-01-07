@@ -31,7 +31,9 @@
     "paths": {
       "@/client/*": ["src/client/*"],
       "@/common/*": ["src/common/*"],
-      "@/server/*": ["src/server/*"]
+      "@/server/*": ["src/server/*"],
+      "$css/*": ["src/client/css/*"],
+      "$env": ["src/common/settings/env"]
     },
 
     /* Modules */

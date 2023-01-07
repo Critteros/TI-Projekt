@@ -22,7 +22,7 @@ const clientConfigBase = {
   module: {
     rules: [
       {
-        test: /\.css$/,
+        test: /\.s?css$/,
         use: [
           {
             loader: 'style-loader',

@@ -1,10 +1,10 @@
 import path from 'path';
 import express from 'express';
 
-import { env } from '@/common/settings/env';
 import { errorHandler } from '@/server/handlers/expressError';
 import { clientCompiler } from '@/server/handlers/clientCompiler';
 import { router as mainRouter } from '@/server/routes/router';
+import { env } from '$env';
 
 import '@/server/handlers/exit';
 import { renderBundle } from './helpers/renderBundle';

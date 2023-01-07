@@ -1,0 +1,6 @@
+@import './tailwind-colors.css';
+@import './reset.css';
+
+body {
+  background-color: var(--tw-color-blue-500);
+}
