@@ -66,6 +66,7 @@
     "webpackbar": "^5.0.2"
   },
   "dependencies": {
+    "axios": "^1.2.2",
     "dotenv": "^16.0.3",
     "ejs": "^3.1.8",
     "envalid": "^7.3.1",
