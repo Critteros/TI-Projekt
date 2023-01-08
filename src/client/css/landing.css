@@ -1,0 +1,42 @@
+@import './nav.css';
+@import './styles.css';
+
+#root {
+  @apply h-screen;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  @apply gap-x-20 gap-y-5 p-5;
+  display: grid;
+  grid-template-columns: 1fr 4fr;
+  grid-template-rows: auto;
+  flex-grow: 1;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.canvas-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+canvas {
+  @apply border-white border-2 rounded-2xl;
+  @apply shadow-white;
+  position: absolute;
+}
+
+menu {
+  @apply font-bold border-white border-2 rounded-2xl;
+  display: flex;
+  flex-direction: column;
+  padding: 2em;
+  align-items: center;
+  color: white;
+  gap: 2rem;
+}

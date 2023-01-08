@@ -22,7 +22,7 @@ const clientConfigBase = {
   module: {
     rules: [
       {
-        test: /\.css$/,
+        test: /\.s?css$/,
         use: [
           {
             loader: 'style-loader',
@@ -40,6 +40,9 @@ const clientConfigBase = {
               sourceMap: true,
             },
           },
+          {
+            loader: 'postcss-loader',
+          },
         ],
       },
     ],
@@ -54,7 +57,14 @@ const clientConfigBase = {
     },
   },
   optimization: {
-    runtimeChunk: 'single',
+    runtimeChunk: {
+      name: (entrypoint) => {
+        if (entrypoint.name.includes('.worker')) {
+          return null;
+        }
+        return 'runtime';
+      },
+    },
   },
 };
 
