@@ -14,7 +14,7 @@ const clientConfigBase = {
     filename: '[name].js',
     chunkFilename: '[name].chunk.js',
     path: paths.jsBundleDir,
-    publicPath: '/bundle',
+    publicPath: '/bundle/',
   },
   entry: {
     ...paths.clientBundles,
@@ -77,8 +77,8 @@ const clientDevConfig = {
     hmr: ['webpack-hot-middleware/client?reload=true'],
   },
   devServer: {
-    hot: true,
-    open: true,
+    hot: false,
+    open: false,
   },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),

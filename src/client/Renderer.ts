@@ -6,6 +6,7 @@ export default class Renderer {
   private particles: Particle[] = [];
   private options: RendererSettings;
   private mouse: MouseCollisionCircle | null;
+  private currentContext: OffscreenCanvasRenderingContext2D | null = null;
 
   constructor(private canvasEl: OffscreenCanvas) {
     this.options = {
@@ -46,20 +47,29 @@ export default class Renderer {
   /**
    * Clean whole canvas
    */
-  public clearCanvas() {
-    const ctx = this.ctx;
+  public clearCanvas(ctx?: OffscreenCanvasRenderingContext2D) {
     const { width, height } = this.canvasEl;
-    ctx.clearRect(0, 0, width, height);
+
+    if (ctx) {
+      ctx.clearRect(0, 0, width, height);
+    } else {
+      ctx = this.ctx;
+      ctx.clearRect(0, 0, width, height);
+    }
   }
 
   /**
    * Context getter
    */
   public get ctx() {
+    if (this.currentContext) {
+      return this.currentContext;
+    }
     const ctx = this.canvasEl.getContext('2d');
     if (ctx === null) {
       throw new Error('Canvas context is null!');
     }
+    this.currentContext = ctx as OffscreenCanvasRenderingContext2D;
     return ctx as OffscreenCanvasRenderingContext2D;
   }
 
@@ -122,13 +132,12 @@ export default class Renderer {
    * Main draw function
    */
   public animate() {
-    requestAnimationFrame(this.animate.bind(this));
     if (this.particles.length === 0) return;
 
     const ctx = this.ctx;
     const cursorLoc = this.mouse;
     const { width: canvasWidth, height: canvasHeight } = this.canvasEl;
-    this.clearCanvas();
+    this.clearCanvas(ctx);
 
     const updateParam: ParticleUpdate = {
       cursor: cursorLoc,
@@ -142,13 +151,14 @@ export default class Renderer {
     });
 
     this.connectParticles(ctx);
+    requestAnimationFrame(this.animate.bind(this));
   }
 
   /**
    * Draw lines between particles
    * @param ctx
    */
-  public connectParticles(ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D) {
+  public connectParticles(ctx: OffscreenCanvasRenderingContext2D) {
     const combinations = k_combinations(this.particles, 2);
     const { height: canvasHeight, width: canvasWidth } = this.canvasEl;
     const { distance: threshold, lineWidth } = this.options;

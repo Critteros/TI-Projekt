@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon",
-    "start": "cross-env NODE_ENV=production node build/index.js",
+    "start": "cross-env NODE_ENV=production node build/server.js",
     "build": "run-p build:*",
     "build:client": "cross-env NODE_ENV=production TARGET=client webpack",
     "build:server": "cross-env NODE_ENV=production TARGET=server webpack",
@@ -25,7 +25,7 @@
       "src/server/**/*.ts",
       "src/server/**/*.ejs"
     ],
-    "exec": "cross-env TARGET=server webpack && node build/index.js"
+    "exec": "cross-env TARGET=server webpack && node build/server.js"
   },
   "devDependencies": {
     "@babel/core": "^7.20.7",
@@ -65,13 +65,13 @@
     "tsconfig-paths": "^4.1.2",
     "tsconfig-paths-webpack-plugin": "^4.0.0",
     "typescript": "^4.9.4",
+    "url-loader": "^4.1.1",
     "webpack-cli": "^5.0.1",
     "webpack-merge": "^5.8.0",
     "webpack-node-externals": "^3.0.0",
     "webpackbar": "^5.0.2"
   },
   "dependencies": {
-    "@fontsource/roboto": "^4.5.8",
     "@types/lodash": "^4.14.191",
     "axios": "^1.2.2",
     "dotenv": "^16.0.3",

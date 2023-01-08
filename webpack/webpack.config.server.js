@@ -12,7 +12,7 @@ const { viewsDir } = require('./paths');
 const serverConfigBase = {
   target: 'node',
   entry: {
-    index: ['./server/index'],
+    server: ['./server/server'],
   },
   plugins: [
     new CopyPlugin({

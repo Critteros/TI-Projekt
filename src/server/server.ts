@@ -17,6 +17,7 @@ app.set('views', path.join(__dirname, '/views'));
 // Global locals
 app.locals.env = env;
 app.locals.renderBundle = renderBundle;
+app.locals.title = 'Symulator cząsteczek';
 
 // Library middlewares
 app.use(express.json());

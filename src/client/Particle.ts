@@ -1,4 +1,3 @@
-import IDrawable from '@/client/interfaces/IDrawable';
 import CollisionDetector from '@/client/utils/CollisionDetector';
 
 export type ParticleParams = {
@@ -20,7 +19,7 @@ export type ParticleUpdate = {
   canvasHeight: number;
 };
 
-export default class Particle implements IDrawable {
+export default class Particle {
   public x: number;
   public y: number;
   private directionX: number;
@@ -37,7 +36,7 @@ export default class Particle implements IDrawable {
     this.color = params.color;
   }
 
-  public draw(ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D) {
+  public draw(ctx: OffscreenCanvasRenderingContext2D) {
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
     ctx.fillStyle = this.color;
