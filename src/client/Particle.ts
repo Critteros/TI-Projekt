@@ -25,8 +25,8 @@ export default class Particle implements IDrawable {
   public y: number;
   private directionX: number;
   private directionY: number;
-  private size: number;
-  private color: string;
+  public size: number;
+  public color: string;
 
   constructor(params: ParticleParams) {
     this.x = params.x;

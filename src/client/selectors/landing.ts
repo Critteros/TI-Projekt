@@ -37,10 +37,16 @@ export const getMenu = () => {
     };
   };
 
+  const resetBtn = document.querySelector('button#reset_btn');
+  if (resetBtn === null) {
+    throw new Error('Unable to find reset button');
+  }
+
   return {
     particleCount: getRangeUI('particle_count'),
     particleSize: getRangeUI('size'),
     distance: getRangeUI('distance'),
     lineWidth: getRangeUI('line'),
+    resetBtn: resetBtn as HTMLButtonElement,
   };
 };

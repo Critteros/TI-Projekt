@@ -1,4 +1,4 @@
-import Particle, { ParticleUpdate } from 'src/Particle';
+import Particle, { ParticleUpdate } from '@/client/Particle';
 import { k_combinations, calculateDistance } from '@/client/utils/math';
 
 export type RendererOptions = {
@@ -35,8 +35,9 @@ export default class Renderer {
 
   private createParticles(particleCount: number): Particle[] {
     const { clientWidth, clientHeight } = this.canvasEl;
+    const { particleSize } = this.options;
     return Array.from({ length: particleCount }, (_, i) => {
-      const size = Math.random() * 5 + 1;
+      const size = Math.random() * particleSize;
       const x = Math.random() * (clientWidth - size * 2 - size * 2) + size * 2;
       const y = Math.random() * (clientHeight - size * 2 - size * 2) + size * 2;
       const directionX = Math.random() * 5 - 2.5;
@@ -78,18 +79,23 @@ export default class Renderer {
     return {
       x: this.mouseX - x,
       y: this.mouseY - y,
-      radius: (height / 100) * (width / 80),
+      radius: 60,
     };
   }
 
+  /**
+   * Clean whole canvas
+   */
   public clearCanvas() {
     const ctx = this.ctx;
     const { width, height } = this.canvasEl;
-    ctx?.clearRect(0, 0, width, height);
+    ctx.clearRect(0, 0, width, height);
   }
 
+  /**
+   * Helper to handle canvas resize
+   */
   public resizeCanvas() {
-    console.log('resize!');
     const { clientHeight, clientWidth, width, height } = this.canvasEl;
     if (clientWidth !== width || clientHeight !== height) {
       this.canvasEl.width = clientWidth;
@@ -97,6 +103,9 @@ export default class Renderer {
     }
   }
 
+  /**
+   * Context getter
+   */
   public get ctx() {
     const ctx = this.canvasEl.getContext('2d');
     if (ctx === null) {
@@ -105,10 +114,54 @@ export default class Renderer {
     return ctx;
   }
 
+  /**
+   * Used to update rendering params
+   * @param update
+   */
   public update(update: Partial<RendererOptions>) {
-    console.log(update);
+    const newOptions = {
+      ...this.options,
+      ...update,
+    };
+    const oldOptions = this.options;
+
+    const {
+      particleCount: newParticleCount,
+      particleSize: newParticleSize,
+      distance: newDistance,
+      lineWidth: newLineWidth,
+    } = newOptions;
+
+    const {
+      particleCount: oldParticleCount,
+      particleSize: oldParticleSize,
+      distance: oldDistance,
+      lineWidth: oldLineWidth,
+    } = oldOptions;
+
+    this.options = newOptions;
+
+    if (newParticleCount < oldParticleCount) {
+      // Delete particles
+      this.particles = this.particles.slice(oldParticleCount - newParticleCount);
+    } else {
+      // Add extra particles
+      this.particles = [
+        ...this.particles,
+        ...this.createParticles(newParticleCount - oldParticleCount),
+      ];
+    }
+
+    if (newParticleSize !== oldParticleSize) {
+      this.particles.forEach((particle) => {
+        particle.size = newParticleSize;
+      });
+    }
   }
 
+  /**
+   * Main draw function
+   */
   public animate() {
     requestAnimationFrame(this.animate.bind(this));
     const ctx = this.ctx;
@@ -130,15 +183,19 @@ export default class Renderer {
     this.connectParticles(ctx);
   }
 
+  /**
+   * Draw lines between particles
+   * @param ctx
+   */
   public connectParticles(ctx: CanvasRenderingContext2D) {
     const combinations = k_combinations(this.particles, 2);
     const { clientHeight: canvasHeight, clientWidth: canvasWidth } = this.canvasEl;
-    const { distance: threshold } = this.options;
+    const { distance: threshold, lineWidth } = this.options;
 
     const drawLine = (first: Particle, second: Particle, alpha: number) => {
       ctx.beginPath();
       ctx.strokeStyle = `rgba(255,255,255,${alpha})`;
-      ctx.lineWidth = alpha;
+      ctx.lineWidth = lineWidth * alpha;
       ctx.moveTo(first.x, first.y);
       ctx.lineTo(second.x, second.y);
       ctx.closePath();
@@ -146,9 +203,11 @@ export default class Renderer {
     };
 
     combinations.forEach(([first, second]) => {
-      const distance = calculateDistance(first, second);
-      if (distance < threshold) {
-        drawLine(first, second, 1 - distance / threshold);
+      if (lineWidth !== 0) {
+        const distance = calculateDistance(first, second);
+        if (distance < threshold) {
+          drawLine(first, second, 1 - distance / threshold);
+        }
       }
     });
   }

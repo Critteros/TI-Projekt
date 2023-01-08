@@ -68,7 +68,7 @@ const fromSliderRange = (value: number, range: LinearRange) => {
 };
 
 export const hydrateMenu = (options: Partial<MenuOptions> = {}) => {
-  const { lineWidth, particleCount, particleSize, distance } = getMenu();
+  const { lineWidth, particleCount, particleSize, distance, resetBtn } = getMenu();
   const settings: MenuOptions = {
     ...getDefaultOptions(),
     ...options,
@@ -86,7 +86,7 @@ export const hydrateMenu = (options: Partial<MenuOptions> = {}) => {
 
   const changeSliderValue = (settings: SliderSettings, target: RangeUI, value?: number) => {
     const { minValue: min, initialValue, maxValue: max } = settings;
-    const { slider, display, label } = target;
+    const { slider, display } = target;
     const targetValue = value ?? initialValue;
     const normalised = toSliderRange(targetValue, {
       max,
@@ -155,36 +155,41 @@ export const hydrateMenu = (options: Partial<MenuOptions> = {}) => {
   });
 
   const getCurrentValues = () => {
-    const particleRaw = particleSize.slider.value;
-    const sizeRaw = particleSize.slider.value;
-    const distanceRaw = distance.slider.value;
-    const thicknessRaw = lineWidth.slider.value;
+    const particleRaw = particleCount.display.innerText;
+    const sizeRaw = particleSize.display.innerText;
+    const distanceRaw = distance.display.innerText;
+    const thicknessRaw = lineWidth.display.innerText;
 
-    const particleCount = fromSliderRange(parseInt(particleRaw), {
-      min: particleSliderSettings.minValue,
-      max: particleSliderSettings.maxValue,
-    });
-    const _particleSize = fromSliderRange(parseInt(sizeRaw), {
-      min: sizeSliderSettings.minValue,
-      max: sizeSliderSettings.maxValue,
-    });
-    const _distance = fromSliderRange(parseInt(distanceRaw), {
-      min: distanceSliderSettings.minValue,
-      max: distanceSliderSettings.maxValue,
-    });
-
-    const thickness = fromSliderRange(parseInt(thicknessRaw), {
-      min: thicknessSliderSettings.minValue,
-      max: thicknessSliderSettings.maxValue,
-    });
+    const _particleCount = parseInt(particleRaw);
+    const _particleSize = parseInt(sizeRaw);
+    const _distance = parseInt(distanceRaw);
+    const thickness = parseInt(thicknessRaw);
 
     return {
-      particleCount,
+      particleCount: _particleCount,
       thickness,
       distance: _distance,
       particleSize: _particleSize,
     };
   };
+
+  const reset = () => {
+    changeSliderValue(particleSliderSettings, particleCount);
+    changeSliderValue(distanceSliderSettings, distance);
+    changeSliderValue(thicknessSliderSettings, lineWidth);
+    changeSliderValue(sizeSliderSettings, particleSize);
+    {
+      const { particleCount, thickness, distance, particleSize } = getCurrentValues();
+      onParticleNumberChange(particleCount);
+      onParticleSizeChange(particleSize);
+      onLineThicknessChange(thickness);
+      onDistanceChange(distance);
+    }
+  };
+
+  resetBtn.addEventListener('click', () => {
+    reset();
+  });
 
   return {
     getCurrentValues,
