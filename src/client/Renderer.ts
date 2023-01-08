@@ -1,45 +1,33 @@
 import Particle, { ParticleUpdate } from '@/client/Particle';
-import { k_combinations, calculateDistance } from '@/client/utils/math';
-
-export type RendererOptions = {
-  particleCount: number;
-  particleSize: number;
-  distance: number;
-  lineWidth: number;
-};
+import { calculateDistance, k_combinations } from '@/client/utils/math';
+import { MouseCollisionCircle, RendererSettings } from '@/client/types/rendering';
 
 export default class Renderer {
-  private mouseInside = false;
-  private mouseX = 0;
-  private mouseY = 0;
-  private particles: Particle[];
-  private options: RendererOptions;
+  private particles: Particle[] = [];
+  private options: RendererSettings;
+  private mouse: MouseCollisionCircle | null;
 
-  constructor(private canvasEl: HTMLCanvasElement, options: Partial<RendererOptions> = {}) {
-    canvasEl.addEventListener('mousemove', this.onMouseMove.bind(this));
-    canvasEl.addEventListener('mouseleave', this.onMouseLeave.bind(this));
-    canvasEl.addEventListener('mouseenter', this.onMouseEnter.bind(this));
-    window.addEventListener('resize', this.onResize.bind(this));
-
+  constructor(private canvasEl: OffscreenCanvas) {
     this.options = {
-      particleCount: options.particleCount ?? 100,
-      distance: options.particleCount ?? 150,
-      particleSize: options.particleSize ?? 5,
-      lineWidth: options.lineWidth ?? 1,
+      particleCount: 0,
+      particleSize: 0,
+      lineWidth: 0,
+      distance: 0,
     };
-
-    this.resizeCanvas();
-
-    this.particles = this.createParticles(this.options.particleCount);
+    this.mouse = {
+      x: 0,
+      y: 0,
+      radius: 0,
+    };
   }
 
   private createParticles(particleCount: number): Particle[] {
-    const { clientWidth, clientHeight } = this.canvasEl;
+    const { width, height } = this.canvasEl;
     const { particleSize } = this.options;
     return Array.from({ length: particleCount }, (_, i) => {
       const size = Math.random() * particleSize;
-      const x = Math.random() * (clientWidth - size * 2 - size * 2) + size * 2;
-      const y = Math.random() * (clientHeight - size * 2 - size * 2) + size * 2;
+      const x = Math.random() * (width - size * 2 - size * 2) + size * 2;
+      const y = Math.random() * (height - size * 2 - size * 2) + size * 2;
       const directionX = Math.random() * 5 - 2.5;
       const directionY = Math.random() * 5 - 2.5;
       const color = 'white';
@@ -55,34 +43,6 @@ export default class Renderer {
     });
   }
 
-  private onMouseMove(event: MouseEvent) {
-    this.mouseX = event.clientX;
-    this.mouseY = event.clientY;
-  }
-
-  private onMouseLeave(event: MouseEvent) {
-    this.mouseInside = false;
-  }
-
-  private onMouseEnter(event: MouseEvent) {
-    this.mouseInside = true;
-  }
-
-  private onResize() {
-    this.resizeCanvas();
-  }
-
-  public getMouseLoc() {
-    if (!this.mouseInside) return null;
-    const { x, y } = this.canvasEl.getBoundingClientRect();
-    const { width, height } = this.canvasEl;
-    return {
-      x: this.mouseX - x,
-      y: this.mouseY - y,
-      radius: 60,
-    };
-  }
-
   /**
    * Clean whole canvas
    */
@@ -93,17 +53,6 @@ export default class Renderer {
   }
 
   /**
-   * Helper to handle canvas resize
-   */
-  public resizeCanvas() {
-    const { clientHeight, clientWidth, width, height } = this.canvasEl;
-    if (clientWidth !== width || clientHeight !== height) {
-      this.canvasEl.width = clientWidth;
-      this.canvasEl.height = clientHeight;
-    }
-  }
-
-  /**
    * Context getter
    */
   public get ctx() {
@@ -111,14 +60,14 @@ export default class Renderer {
     if (ctx === null) {
       throw new Error('Canvas context is null!');
     }
-    return ctx;
+    return ctx as OffscreenCanvasRenderingContext2D;
   }
 
   /**
    * Used to update rendering params
    * @param update
    */
-  public update(update: Partial<RendererOptions>) {
+  public updateSettings(update: Partial<RendererSettings>) {
     const newOptions = {
       ...this.options,
       ...update,
@@ -140,7 +89,6 @@ export default class Renderer {
     } = oldOptions;
 
     this.options = newOptions;
-
     if (newParticleCount < oldParticleCount) {
       // Delete particles
       this.particles = this.particles.slice(oldParticleCount - newParticleCount);
@@ -159,13 +107,26 @@ export default class Renderer {
     }
   }
 
+  public updateMouseCollider(collider: MouseCollisionCircle | null) {
+    this.mouse = collider;
+  }
+
+  public updateDimensions({ width, height }: { width: number; height: number }) {
+    if (this.canvasEl.width !== width || this.canvasEl.height !== height) {
+      this.canvasEl.width = width;
+      this.canvasEl.height = height;
+    }
+  }
+
   /**
    * Main draw function
    */
   public animate() {
     requestAnimationFrame(this.animate.bind(this));
+    if (this.particles.length === 0) return;
+
     const ctx = this.ctx;
-    const cursorLoc = this.getMouseLoc();
+    const cursorLoc = this.mouse;
     const { width: canvasWidth, height: canvasHeight } = this.canvasEl;
     this.clearCanvas();
 
@@ -187,9 +148,9 @@ export default class Renderer {
    * Draw lines between particles
    * @param ctx
    */
-  public connectParticles(ctx: CanvasRenderingContext2D) {
+  public connectParticles(ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D) {
     const combinations = k_combinations(this.particles, 2);
-    const { clientHeight: canvasHeight, clientWidth: canvasWidth } = this.canvasEl;
+    const { height: canvasHeight, width: canvasWidth } = this.canvasEl;
     const { distance: threshold, lineWidth } = this.options;
 
     const drawLine = (first: Particle, second: Particle, alpha: number) => {

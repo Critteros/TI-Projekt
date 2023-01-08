@@ -57,7 +57,14 @@ const clientConfigBase = {
     },
   },
   optimization: {
-    runtimeChunk: 'single',
+    runtimeChunk: {
+      name: (entrypoint) => {
+        if (entrypoint.name.includes('.worker')) {
+          return null;
+        }
+        return 'runtime';
+      },
+    },
   },
 };
 

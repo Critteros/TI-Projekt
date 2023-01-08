@@ -1,27 +1,29 @@
 import '../css/landing.css';
 import '@fontsource/roboto';
 
-import Renderer from '@/client/Renderer';
 import { getCanvas } from '@/client/selectors/landing';
 import { hydrateMenu } from '@/client/ui/hydrateMenu';
+import WorkerRenderer from '@/client/WorkerRenderer';
 
-const renderer = new Renderer(getCanvas());
-renderer.animate();
+// const renderer = new Renderer(getCanvas());
+// renderer.animate();
+const handle = new WorkerRenderer(getCanvas());
 
 const { getCurrentValues } = hydrateMenu({
   onDistanceChange: (distance) => {
-    renderer.update({ distance });
+    handle.sendSettingsUpdate({ distance });
   },
   onLineThicknessChange: (lineWidth) => {
-    renderer.update({ lineWidth });
+    handle.sendSettingsUpdate({ lineWidth });
   },
   onParticleSizeChange: (particleSize) => {
-    renderer.update({ particleSize });
+    handle.sendSettingsUpdate({ particleSize });
   },
   onParticleNumberChange: (particleCount) => {
-    renderer.update({ particleCount });
+    handle.sendSettingsUpdate({ particleCount });
   },
 });
-renderer.update(getCurrentValues());
+handle.sendSettingsUpdate(getCurrentValues());
+handle.run();
 
 export {};

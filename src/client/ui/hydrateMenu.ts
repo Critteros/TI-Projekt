@@ -1,55 +1,8 @@
 import { getMenu, RangeUI } from '../selectors/landing';
-import { LinearRange, convertRange } from '@/client/utils/math';
-
-type SliderSettings = {
-  initialValue: number;
-  maxValue: number;
-  minValue: number;
-};
-
-type MenuOptions = {
-  onParticleNumberChange: (newValue: number) => void;
-  onParticleSizeChange: (newValue: number) => void;
-  onDistanceChange: (newValue: number) => void;
-  onLineThicknessChange: (newValue: number) => void;
-  particleSliderSettings: SliderSettings;
-  sizeSliderSettings: SliderSettings;
-  distanceSliderSettings: SliderSettings;
-  thicknessSliderSettings: SliderSettings;
-};
-
-const getDefaultOptions = (): MenuOptions => {
-  const emptyFunction = () => {
-    /**/
-  };
-
-  return {
-    onParticleNumberChange: emptyFunction,
-    onParticleSizeChange: emptyFunction,
-    onDistanceChange: emptyFunction,
-    onLineThicknessChange: emptyFunction,
-    particleSliderSettings: {
-      maxValue: 800,
-      minValue: 0,
-      initialValue: 100,
-    },
-    distanceSliderSettings: {
-      minValue: 0,
-      maxValue: 1000,
-      initialValue: 150,
-    },
-    sizeSliderSettings: {
-      minValue: 0,
-      maxValue: 10,
-      initialValue: 5,
-    },
-    thicknessSliderSettings: {
-      minValue: 0,
-      maxValue: 20,
-      initialValue: 1,
-    },
-  };
-};
+import { convertRange, LinearRange } from '@/client/utils/math';
+import { MenuOptions, SliderSettings } from '@/client/types/ui';
+import { getDefaultMenuSettings } from '@/client/settings/defaults';
+import { RendererSettings } from '@/client/types/rendering';
 
 const toSliderRange = (value: number, range: LinearRange) => {
   const sliderRange: LinearRange = {
@@ -70,7 +23,7 @@ const fromSliderRange = (value: number, range: LinearRange) => {
 export const hydrateMenu = (options: Partial<MenuOptions> = {}) => {
   const { lineWidth, particleCount, particleSize, distance, resetBtn } = getMenu();
   const settings: MenuOptions = {
-    ...getDefaultOptions(),
+    ...getDefaultMenuSettings(),
     ...options,
   };
   const {
@@ -154,7 +107,7 @@ export const hydrateMenu = (options: Partial<MenuOptions> = {}) => {
     lineWidth.display.innerText = `${value}`;
   });
 
-  const getCurrentValues = () => {
+  const getCurrentValues = (): RendererSettings => {
     const particleRaw = particleCount.display.innerText;
     const sizeRaw = particleSize.display.innerText;
     const distanceRaw = distance.display.innerText;
@@ -167,7 +120,7 @@ export const hydrateMenu = (options: Partial<MenuOptions> = {}) => {
 
     return {
       particleCount: _particleCount,
-      thickness,
+      lineWidth: thickness,
       distance: _distance,
       particleSize: _particleSize,
     };
@@ -179,10 +132,10 @@ export const hydrateMenu = (options: Partial<MenuOptions> = {}) => {
     changeSliderValue(thicknessSliderSettings, lineWidth);
     changeSliderValue(sizeSliderSettings, particleSize);
     {
-      const { particleCount, thickness, distance, particleSize } = getCurrentValues();
+      const { particleCount, lineWidth, distance, particleSize } = getCurrentValues();
       onParticleNumberChange(particleCount);
       onParticleSizeChange(particleSize);
-      onLineThicknessChange(thickness);
+      onLineThicknessChange(lineWidth);
       onDistanceChange(distance);
     }
   };

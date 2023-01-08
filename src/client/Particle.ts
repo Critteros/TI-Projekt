@@ -37,7 +37,7 @@ export default class Particle implements IDrawable {
     this.color = params.color;
   }
 
-  public draw(ctx: CanvasRenderingContext2D) {
+  public draw(ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D) {
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
     ctx.fillStyle = this.color;
