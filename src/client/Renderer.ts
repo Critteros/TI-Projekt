@@ -3,7 +3,9 @@ import { k_combinations, calculateDistance } from '@/client/utils/math';
 
 export type RendererOptions = {
   particleCount: number;
-  threshold: number;
+  particleSize: number;
+  distance: number;
+  lineWidth: number;
 };
 
 export default class Renderer {
@@ -21,7 +23,9 @@ export default class Renderer {
 
     this.options = {
       particleCount: options.particleCount ?? 100,
-      threshold: options.particleCount ?? 150,
+      distance: options.particleCount ?? 150,
+      particleSize: options.particleSize ?? 5,
+      lineWidth: options.lineWidth ?? 1,
     };
 
     this.resizeCanvas();
@@ -53,22 +57,18 @@ export default class Renderer {
   private onMouseMove(event: MouseEvent) {
     this.mouseX = event.clientX;
     this.mouseY = event.clientY;
-    this.update();
   }
 
   private onMouseLeave(event: MouseEvent) {
     this.mouseInside = false;
-    this.update();
   }
 
   private onMouseEnter(event: MouseEvent) {
     this.mouseInside = true;
-    this.update();
   }
 
   private onResize() {
     this.resizeCanvas();
-    this.update();
   }
 
   public getMouseLoc() {
@@ -105,31 +105,8 @@ export default class Renderer {
     return ctx;
   }
 
-  private update() {
-    // this.clearCanvas();
-    // const ctx = this.ctx;
-    //
-    // const pos = this.getMouseLoc();
-    //
-    // const particle = new Particle({
-    //   x: 100,
-    //   y: 100,
-    //   size: 50,
-    //   color: 'white',
-    //   directionY: 100,
-    //   directionX: 100,
-    // });
-    // particle.draw(ctx);
-    //
-    // if (pos) {
-    //   const { x, y } = pos;
-    //   ctx.beginPath();
-    //   ctx.fillStyle = 'white';
-    //   // console.log(x, y);
-    //   ctx.arc(x, y, 20, 0, 2 * Math.PI);
-    //   ctx.fill();
-    //   ctx.closePath();
-    // }
+  public update(update: Partial<RendererOptions>) {
+    console.log(update);
   }
 
   public animate() {
@@ -156,7 +133,7 @@ export default class Renderer {
   public connectParticles(ctx: CanvasRenderingContext2D) {
     const combinations = k_combinations(this.particles, 2);
     const { clientHeight: canvasHeight, clientWidth: canvasWidth } = this.canvasEl;
-    const { threshold } = this.options;
+    const { distance: threshold } = this.options;
 
     const drawLine = (first: Particle, second: Particle, alpha: number) => {
       ctx.beginPath();

@@ -19,3 +19,26 @@ body {
   padding: 0.5em;
   color: white;
 }
+
+.range_wrapper {
+  @apply gap-y-2  text-lg w-full;
+  display: grid;
+  grid-template-areas:
+    'text text text value'
+    'range range range range';
+}
+
+.range_wrapper label {
+  grid-area: text;
+}
+
+.range_wrapper span {
+  grid-area: value;
+  align-self: flex-end;
+  justify-self: flex-end;
+}
+
+.range_wrapper input[type='range'] {
+  @apply w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700;
+  grid-area: range;
+}

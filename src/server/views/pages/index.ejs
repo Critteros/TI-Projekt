@@ -4,13 +4,23 @@
     <%- include('../partials/meta/head', {title: 'title'}); %> <%- renderBundle('landing') %>
   </head>
   <body>
-  <div id="root">
-    <%- include('../partials/molecules/navbar'); %>
-    <main>
-      <div class="canvas-wrapper">
-        <canvas></canvas>
-      </div>
-    </main>
-  </div>
+    <div id="root">
+      <%- include('../partials/molecules/navbar'); %>
+      <main>
+        <menu>
+          <%- include('../partials/atoms/range', { id: 'particle_count', sliderTitle: 'Ilość cząsteczek',
+          sliderInitialValue: 25 }) %>
+          <%- include('../partials/atoms/range', { id: 'size', sliderTitle: 'Wielkość cząsteczki',
+          sliderInitialValue: 25 }) %>
+          <%- include('../partials/atoms/range', { id: 'distance', sliderTitle: 'Dystans łączenia',
+          sliderInitialValue: 25 }) %>
+          <%- include('../partials/atoms/range', { id: 'line', sliderTitle: 'Grubość łączenia',
+          sliderInitialValue: 25 }) %>
+        </menu>
+        <div class="canvas-wrapper">
+          <canvas></canvas>
+        </div>
+      </main>
+    </div>
   </body>
 </html>

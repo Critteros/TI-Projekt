@@ -44,3 +44,14 @@ export const calculateDistance = <T extends { x: number; y: number }>(
   const differenceY = first.y - second.y;
   return Math.sqrt(differenceX * differenceX + differenceY * differenceY);
 };
+
+export type LinearRange = {
+  min: number;
+  max: number;
+};
+
+export const convertRange = (value: number, from: LinearRange, to: LinearRange) => {
+  const oldRange = from.max - from.min;
+  const newRange = to.max - to.min;
+  return ((value - from.min) * newRange) / oldRange + to.min;
+};
