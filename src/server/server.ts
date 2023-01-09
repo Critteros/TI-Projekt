@@ -1,6 +1,7 @@
 import path from 'path';
 import express from 'express';
 import helmet from 'helmet';
+import { PrismaClient } from '@prisma/client';
 
 import { errorHandler } from '@/server/handlers/expressError';
 import { clientCompiler } from '@/server/handlers/clientCompiler';
@@ -11,6 +12,8 @@ import '@/server/handlers/exit';
 import { renderBundle } from './helpers/renderBundle';
 
 const app = express();
+const prisma = new PrismaClient();
+app.prisma = prisma;
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, '/views'));
