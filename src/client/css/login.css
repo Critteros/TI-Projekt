@@ -1,0 +1,68 @@
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+nav {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 0;
+  left: 0;
+  padding: 10px;
+}
+
+nav svg {
+  @apply w-10 h-10;
+  color: white;
+}
+
+form {
+  @apply border-white border-2 rounded-2xl;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.wrapper {
+  display: flex;
+  position: relative;
+}
+
+.wrapper svg {
+  @apply border-2 border-white rounded-3xl h-full;
+  display: flex;
+  position: absolute;
+  color: white;
+  background-color: black;
+  padding: 5px;
+  fill: white;
+}
+
+svg#password-icon {
+  fill: none;
+  overflow: visible;
+}
+
+label {
+  @apply font-bold;
+  color: white;
+}
+input[type='text'],
+input[type='password'] {
+  @apply border-white rounded-3xl border-2 text-lg p-2;
+  background-color: black;
+  color: white;
+  text-align: center;
+  width: 20vw;
+  min-width: 300px;
+}
+
+input[type='submit'] {
+  @apply rounded-2xl;
+  margin-top: 20px;
+}
