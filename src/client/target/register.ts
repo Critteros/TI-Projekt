@@ -1,3 +1,3 @@
-import '../css/styles.css';
-import '../css/register.css';
+import '$css/styles.css';
+import '$css/authPage.css';
 export {};

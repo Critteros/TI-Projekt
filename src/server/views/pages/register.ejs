@@ -4,6 +4,11 @@
     <%- include('../partials/meta/head'); %> <%- renderBundle('register') %>
 </head>
 <body>
-    sdfsdf
+<%- include('../partials/atoms/homeNav') %>
+<main>
+    <%- include('../partials/molecules/authForm', {
+    submitName: 'Zarejestruj'
+    }); %>
+</main>
 </body>
 </html>
