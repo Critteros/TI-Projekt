@@ -132,12 +132,12 @@ export default class Renderer {
    * Main draw function
    */
   public animate() {
-    if (this.particles.length === 0) return;
-
+    requestAnimationFrame(this.animate.bind(this));
     const ctx = this.ctx;
     const cursorLoc = this.mouse;
     const { width: canvasWidth, height: canvasHeight } = this.canvasEl;
     this.clearCanvas(ctx);
+    if (this.particles.length === 0) return;
 
     const updateParam: ParticleUpdate = {
       cursor: cursorLoc,
@@ -151,7 +151,6 @@ export default class Renderer {
     });
 
     this.connectParticles(ctx);
-    requestAnimationFrame(this.animate.bind(this));
   }
 
   /**
