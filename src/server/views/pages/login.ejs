@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/meta/head'); %> <%- renderBundle('login') %>
+</head>
+<body>
+    <%- include('../partials/atoms/homeNav') %>
+    <main>
+        <%- include('../partials/molecules/authForm', {
+         submitName: 'Zaloguj'
+        }); %>
+    </main>
+</body>
+</html>

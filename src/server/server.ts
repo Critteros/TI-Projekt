@@ -1,5 +1,6 @@
 import path from 'path';
 import express from 'express';
+import helmet from 'helmet';
 
 import { errorHandler } from '@/server/handlers/expressError';
 import { clientCompiler } from '@/server/handlers/clientCompiler';
@@ -21,6 +22,11 @@ app.locals.title = 'Symulator cząsteczek';
 
 // Library middlewares
 app.use(express.json());
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+  }),
+);
 
 // Own middlewares, routers
 app.use('/', mainRouter);
