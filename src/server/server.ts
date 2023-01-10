@@ -1,6 +1,7 @@
 import path from 'path';
 import express from 'express';
 import helmet from 'helmet';
+import cookieParser from 'cookie-parser';
 import { PrismaClient } from '@prisma/client';
 
 import { errorHandler } from '@/server/handlers/expressError';
@@ -25,6 +26,7 @@ app.locals.title = 'Symulator cząsteczek';
 
 // Library middlewares
 app.use(express.json());
+app.use(cookieParser());
 app.use(
   helmet({
     contentSecurityPolicy: false,

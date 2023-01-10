@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-import { cleanEnv, port, str } from 'envalid';
+import { cleanEnv, port, str, url } from 'envalid';
 
 dotenv.config();
 
@@ -10,4 +10,6 @@ export const env = cleanEnv(process.env, {
   }),
   PORT: port({ default: 9000 }),
   HOST: str({ default: '0.0.0.0' }),
+  DATABASE_URL: url(),
+  JWT_SECRET: str(),
 });
