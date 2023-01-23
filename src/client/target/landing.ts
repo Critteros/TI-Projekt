@@ -6,10 +6,21 @@ import WorkerRenderer from '@/client/WorkerRenderer';
 import { api } from '@/client/api';
 import { DataManager } from '@/client/DataManager';
 
-const handle = new WorkerRenderer(getCanvas());
-const dataManager = new DataManager();
+const run = async () => {
+  const handle = new WorkerRenderer(getCanvas());
+  const dataManager = new DataManager();
 
-(async () => {
+  document.querySelector('button.btn-logout')?.addEventListener('click', async (event) => {
+    event.preventDefault();
+
+    try {
+      await api.public.post('/api/auth/logout');
+    } catch (e) {
+      console.error(e);
+    }
+    window.location.replace('/');
+  });
+
   const { getCurrentValues } = hydrateMenu({
     ...(await dataManager.initialValues()),
     onDistanceChange: (distance) => {
@@ -31,17 +42,10 @@ const dataManager = new DataManager();
   });
   handle.sendSettingsUpdate(getCurrentValues());
   handle.run();
-})();
+};
 
-document.querySelector('button.btn-logout')?.addEventListener('click', async (event) => {
-  event.preventDefault();
-
-  try {
-    await api.public.post('/api/auth/logout');
-  } catch (e) {
-    console.error(e);
-  }
-  window.location.replace('/');
+window.addEventListener('load', () => {
+  void run();
 });
 
 export {};
