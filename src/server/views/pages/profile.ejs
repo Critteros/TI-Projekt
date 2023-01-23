@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/meta/head'); %> <%- renderBundle('profile') %>
+</head>
+<body>
+    <%- include('../partials/atoms/homeNav') %>
+    <main>
+        <h3><%= session.login %></h3>
+        <% if (settings) {%>
+        <div>
+            <h5>Stored settings</h5>
+            <div class="grid-wrapper">
+                <span class="key">Ilość cząsteczek</span>
+                <span class="value"><%= settings.pc %></span>
+
+                <span class="key">Wielkość cząsteczki</span>
+                <span class="value"><%= settings.ps %></span>
+
+                <span class="key">Dystans łączenia</span>
+                <span class="value"><%= settings.cd%></span>
+
+                <span class="key">Grubość łączenia</span>
+                <span class="value"><%= settings.lt %></span>
+            </div>
+        </div>
+        <% } else { %>
+            <h5>No stored settings</h5>
+        <% }%>
+    </main>
+</body>
+</html>
