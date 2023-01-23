@@ -19,8 +19,7 @@ export const SettingsGetResponseSchema = z
     z.object({
       found: z.literal(false),
     }),
-  )
-  .or(ErrorResponseSchema);
+  );
 export type SettingsGetResponse = z.infer<typeof SettingsGetResponseSchema>;
 
 export const SettingsUpdateRequestSchema = SettingsSchema;

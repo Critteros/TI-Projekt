@@ -4,12 +4,6 @@ import '$css/authPage.css';
 import { api } from '@/client/api';
 import { AxiosError } from 'axios';
 
-const test = async () => {
-  const { data } = await api.private.get('/api/session');
-  console.log(data);
-};
-test();
-
 document.querySelector('form')?.addEventListener('submit', async (event) => {
   event.preventDefault();
   const formData = new FormData(event.target as HTMLFormElement);

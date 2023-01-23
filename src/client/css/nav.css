@@ -1,13 +1,22 @@
-.nav-wrapper {
+header {
   @apply w-full;
   display: flex;
   flex-direction: column;
+  position: relative;
+}
+
+header > h3 {
+  align-self: center;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 2rem;
 }
 
 nav {
   @apply m-5;
   display: flex;
-  justify-content: flex-end;
+  align-self: flex-end;
   gap: 2rem;
 }
 

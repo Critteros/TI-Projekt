@@ -12,6 +12,7 @@ import { env } from '$env';
 import '@/server/handlers/exit';
 import { renderBundle } from './helpers/renderBundle';
 import { sessionMiddleware } from '@/server/middleware/sessionMiddleware';
+import { serverSession } from '@/server/middleware/serverSession';
 
 const app = express();
 const prisma = new PrismaClient();
@@ -37,6 +38,7 @@ app.use(
 // Own middlewares, routers
 app.use(clientCompiler());
 app.use(sessionMiddleware);
+app.use(serverSession);
 app.use('/', mainRouter);
 
 // Main error handler for uncaught errors

@@ -33,7 +33,7 @@ export const sessionMiddleware = async (req: Request, res: Response, next: NextF
 
     req.session = user;
   } catch (e) {
-    console.error(e);
+    /**/
   }
 
   return next();

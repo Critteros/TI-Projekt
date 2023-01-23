@@ -1,10 +1,8 @@
-import axios, { type AxiosHeaders } from 'axios';
+import axios from 'axios';
 import { StatusCodes } from 'http-status-codes';
 
-import type { Session } from '@/common/dto/session';
 import type { TokenResponse } from '@/common/dto/auth';
 
-let session: Session | null = null;
 let accessToken: string | null = null;
 
 const jsonContentHeader = {
@@ -15,22 +13,7 @@ const publicClient = axios.create({
   headers: { ...jsonContentHeader },
 });
 
-const getSession = () => session;
-
-const refreshSession = async () => {
-  const { data } = await publicClient.get<Session>('/api/session');
-  session = data;
-  return data;
-};
-
-const invalidateSession = async () => {
-  session = null;
-  try {
-    await refreshSession();
-  } catch (error) {
-    session = null;
-  }
-};
+const getSession = () => window.session;
 
 const refreshAccessToken = async () => {
   const {
@@ -70,7 +53,7 @@ privateClient.interceptors.response.use(
         prevRequest.headers.set('Authorization', `Bearer ${token}`);
         return privateClient(prevRequest);
       } catch (error) {
-        session = null;
+        window.session = null;
         return Promise.reject(error);
       }
     }
@@ -82,6 +65,4 @@ export const api = {
   public: publicClient,
   private: privateClient,
   getSession,
-  refreshSession,
-  invalidateSession,
 };

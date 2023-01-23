@@ -175,6 +175,7 @@ export const tokenController = async (
     // 1) Delete all refresh tokens for the context user
     prisma.token.deleteMany({ where: { userId: refreshToken.userId } });
     clearRefreshToken(res);
+    console.log('reuse detected');
     return res.status(StatusCodes.UNAUTHORIZED).json({
       error: getReasonPhrase(StatusCodes.UNAUTHORIZED),
     });

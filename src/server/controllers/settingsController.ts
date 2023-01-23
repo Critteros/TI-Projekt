@@ -6,8 +6,12 @@ import {
   SettingsUpdateResponse,
 } from '@/common/dto/settings';
 import { Prisma } from '@prisma/client';
+import { ErrorResponse } from '@/common/dto/error';
 
-export const getSettings = async (req: Request, res: Response<SettingsGetResponse>) => {
+export const getSettings = async (
+  req: Request,
+  res: Response<SettingsGetResponse | ErrorResponse>,
+) => {
   const { session } = req;
   if (!session) {
     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
