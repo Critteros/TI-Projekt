@@ -31,7 +31,7 @@ canvas {
   position: absolute;
 }
 
-menu {
+.menu {
   @apply font-bold border-white border-2 rounded-2xl;
   display: flex;
   flex-direction: column;

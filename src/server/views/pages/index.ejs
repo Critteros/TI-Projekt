@@ -7,7 +7,7 @@
     <div id="root">
       <%- include('../partials/molecules/navbar'); %>
       <main>
-        <menu>
+        <div class="menu">
           <%- include('../partials/atoms/range', { id: 'particle_count', sliderTitle: 'Ilość cząsteczek',
           sliderInitialValue: 25 }) %>
           <%- include('../partials/atoms/range', { id: 'size', sliderTitle: 'Wielkość cząsteczki',
@@ -17,7 +17,7 @@
           <%- include('../partials/atoms/range', { id: 'line', sliderTitle: 'Grubość łączenia',
           sliderInitialValue: 25 }) %>
           <button id="reset_btn" class="btn">Reset</button>
-        </menu>
+        </div>
         <div class="canvas-wrapper">
           <canvas></canvas>
         </div>
