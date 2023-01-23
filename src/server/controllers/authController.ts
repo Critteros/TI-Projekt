@@ -14,6 +14,7 @@ import {
   TokenResponse,
 } from '@/common/dto/auth';
 import { getReasonPhrase, StatusCodes } from 'http-status-codes';
+import { ErrorResponse } from '@/common/dto/error';
 
 export const JWTSchema = z.object({
   userId: z.string(),
@@ -127,7 +128,10 @@ export const getVerifiedRefreshToken = async (req: Request) => {
  * @param req
  * @param res
  */
-export const tokenController = async (req: Request, res: Response<TokenResponse>) => {
+export const tokenController = async (
+  req: Request,
+  res: Response<TokenResponse | ErrorResponse>,
+) => {
   // Check if the request have attached refresh token
   const tokenResult = await getVerifiedRefreshToken(req);
 
@@ -211,14 +215,15 @@ export const registerController = async (req: Request, res: Response<SignupRespo
   await removeRefreshTokenFromDB(req);
 
   // 1) Check if the request data is valid
-  const signupRequest: Signup = req.body;
-  const isValid = await SignupSchema.safeParseAsync(signupRequest);
+  const isValid = await SignupSchema.safeParseAsync(req.body);
   if (!isValid.success) {
     return res.status(StatusCodes.BAD_REQUEST).json({
       error: 'Invalid request parameters',
       fields: isValid.error.flatten().fieldErrors,
     });
   }
+
+  const { data: signupRequest } = isValid;
 
   // Try to create a new user in the DB
   try {

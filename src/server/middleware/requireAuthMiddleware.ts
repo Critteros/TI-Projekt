@@ -7,12 +7,13 @@ export const requireAuthMiddleware = async (req: Request, res: Response, next: N
       error: 'Missing session middleware',
     });
   }
+  console.log('hello');
 
   if (req.session) {
     return next();
   }
 
-  return res.status(StatusCodes.FORBIDDEN).json({
-    error: getReasonPhrase(StatusCodes.FORBIDDEN),
+  return res.status(StatusCodes.UNAUTHORIZED).json({
+    error: getReasonPhrase(StatusCodes.UNAUTHORIZED),
   });
 };

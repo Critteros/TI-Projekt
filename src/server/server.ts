@@ -35,9 +35,9 @@ app.use(
 );
 
 // Own middlewares, routers
-app.use('/', mainRouter);
 app.use(clientCompiler());
 app.use(sessionMiddleware);
+app.use('/', mainRouter);
 
 // Main error handler for uncaught errors
 app.use(errorHandler());

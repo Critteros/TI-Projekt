@@ -22,13 +22,8 @@ export const LogoutResponseSchema = z.object({
 });
 export type LogoutResponse = z.infer<typeof LogoutResponseSchema>;
 
-export const TokenResponseSchema = z.union([
-  z.object({
-    message: z.literal('success'),
-    token: z.string(),
-  }),
-  z.object({
-    error: z.string().min(1),
-  }),
-]);
+export const TokenResponseSchema = z.object({
+  message: z.literal('success'),
+  token: z.string(),
+});
 export type TokenResponse = z.infer<typeof TokenResponseSchema>;
