@@ -1,12 +1,15 @@
 import '$css/styles.css';
 import '$css/authPage.css';
 
+import Toastify from 'toastify-js';
+
 import { api } from '@/client/api';
 import { AxiosError } from 'axios';
 
 document.querySelector('form')?.addEventListener('submit', async (event) => {
   event.preventDefault();
-  const formData = new FormData(event.target as HTMLFormElement);
+  const formEl = event.target as HTMLFormElement;
+  const formData = new FormData(formEl);
   const object = Object.fromEntries(formData.entries());
 
   try {
@@ -14,8 +17,18 @@ document.querySelector('form')?.addEventListener('submit', async (event) => {
     window.location.replace('/');
   } catch (e) {
     if (e instanceof AxiosError) {
-      console.log(e);
-      alert(e.response?.data.error);
+      Toastify({
+        text: e.response?.data.error,
+        duration: 3000,
+        newWindow: true,
+        close: true,
+        className: 'notification',
+        gravity: 'bottom',
+        position: 'center',
+        stopOnFocus: true,
+      }).showToast();
+
+      formEl.reset();
     }
   }
 });

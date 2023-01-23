@@ -59,3 +59,15 @@ nav#homeNav svg {
   @apply w-10 h-10;
   color: white;
 }
+
+.notification {
+  position: absolute;
+  bottom: 10px;
+  margin: 10px auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  background-color: red;
+  border-radius: 10px;
+}

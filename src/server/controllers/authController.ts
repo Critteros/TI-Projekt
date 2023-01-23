@@ -219,7 +219,7 @@ export const registerController = async (req: Request, res: Response<SignupRespo
   const isValid = await SignupSchema.safeParseAsync(req.body);
   if (!isValid.success) {
     return res.status(StatusCodes.BAD_REQUEST).json({
-      error: 'Invalid request parameters',
+      error: 'Zły login lub hasło',
       fields: isValid.error.flatten().fieldErrors,
     });
   }
@@ -254,7 +254,7 @@ export const loginController = async (req: Request, res: Response<SignupResponse
   const isValid = await SignupSchema.safeParseAsync(signupRequest);
   if (!isValid.success) {
     return res.status(StatusCodes.BAD_REQUEST).json({
-      error: 'Invalid request parameters',
+      error: 'Zły login lub hasło',
       fields: isValid.error.flatten().fieldErrors,
     });
   }
