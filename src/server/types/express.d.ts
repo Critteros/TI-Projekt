@@ -10,10 +10,14 @@ type Locals = {
 declare module 'express-serve-static-core' {
   interface Express extends Application {
     locals: Locals;
-    request: Request;
+    request: Request & RequestExtra;
     response: Response;
   }
   interface Application {
     prisma: PrismaClient;
+  }
+
+  interface Request {
+    userId: string;
   }
 }

@@ -15,7 +15,7 @@ import {
 } from '@/common/dto/auth';
 import { getReasonPhrase, StatusCodes } from 'http-status-codes';
 
-const JWTSchema = z.object({
+export const JWTSchema = z.object({
   userId: z.string(),
   type: z.enum(['access', 'refresh']),
 });
