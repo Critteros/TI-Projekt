@@ -127,6 +127,12 @@ export const hydrateMenu = (options: Partial<MenuOptions> = {}) => {
   };
 
   const reset = () => {
+    const {
+      distanceSliderSettings,
+      thicknessSliderSettings,
+      sizeSliderSettings,
+      particleSliderSettings,
+    } = getDefaultMenuSettings();
     changeSliderValue(particleSliderSettings, particleCount);
     changeSliderValue(distanceSliderSettings, distance);
     changeSliderValue(thicknessSliderSettings, lineWidth);

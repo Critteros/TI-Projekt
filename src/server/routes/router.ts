@@ -1,6 +1,7 @@
 import express from 'express';
 
 import { router as apiRouter } from './api/router';
+import { logoutController } from '@/server/controllers/authController';
 
 export const router = express.Router();
 
@@ -18,3 +19,5 @@ router.get('/register', (req, res) => {
 router.get('/login', (req, res) => {
   res.render('pages/login');
 });
+
+router.get('/logout', logoutController);

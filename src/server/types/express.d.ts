@@ -1,5 +1,5 @@
 import type { env } from '@/common/settings/env';
-import type { PrismaClient } from '@prisma/client';
+import type { PrismaClient, User } from '@prisma/client';
 
 type Locals = {
   env: typeof env;
@@ -10,10 +10,15 @@ type Locals = {
 declare module 'express-serve-static-core' {
   interface Express extends Application {
     locals: Locals;
-    request: Request;
+    request: Request & RequestExtra;
     response: Response;
   }
   interface Application {
     prisma: PrismaClient;
+  }
+
+  interface Request {
+    userId?: string;
+    session: User | null;
   }
 }
