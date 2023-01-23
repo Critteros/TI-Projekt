@@ -16,3 +16,19 @@ export const SignupResponseSchema = z.union([
   }),
 ]);
 export type SignupResponse = z.infer<typeof SignupResponseSchema>;
+
+export const LogoutResponseSchema = z.object({
+  message: z.literal('success'),
+});
+export type LogoutResponse = z.infer<typeof LogoutResponseSchema>;
+
+export const TokenResponseSchema = z.union([
+  z.object({
+    message: z.literal('success'),
+    token: z.string(),
+  }),
+  z.object({
+    error: z.string().min(1),
+  }),
+]);
+export type TokenResponse = z.infer<typeof TokenResponseSchema>;

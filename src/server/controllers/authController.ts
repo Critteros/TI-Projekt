@@ -1,17 +1,26 @@
-import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import dayjs from 'dayjs';
+import { Request, Response } from 'express';
 import { User } from '@prisma/client';
+import { z } from 'zod';
 
 import Users from '@/server/models/Users';
 import { env } from '$env';
-import { Signup, SignupResponse, SignupSchema } from '@/common/dto/auth';
-import { StatusCodes } from 'http-status-codes';
+import {
+  LogoutResponse,
+  Signup,
+  SignupResponse,
+  SignupSchema,
+  TokenResponse,
+} from '@/common/dto/auth';
+import { getReasonPhrase, StatusCodes } from 'http-status-codes';
 
-type JWTContent = {
-  userId: string;
-  type: 'access' | 'refresh';
-};
+const JWTSchema = z.object({
+  userId: z.string(),
+  type: z.enum(['access', 'refresh']),
+});
+
+type JWTContent = z.infer<typeof JWTSchema>;
 
 /**
  * Creates JWT token
@@ -41,7 +50,11 @@ export const setRefreshToken = <T>(res: Response<T>, jwt: string) => {
  * @param res
  * @param user
  */
-const sendRefreshToken = async (req: Request, res: Response<SignupResponse>, user: User) => {
+const sendRefreshToken = async <T = unknown>(
+  req: Request,
+  res: Response<T>,
+  user: Pick<User, 'id'>,
+) => {
   // Set a refresh token
   const refreshToken = createJWT({
     userId: user.id,
@@ -57,14 +70,15 @@ const sendRefreshToken = async (req: Request, res: Response<SignupResponse>, use
       },
     });
   } catch (error) {
-    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       error: 'Could not write to database',
     });
+    return;
   }
 
-  return setRefreshToken(res, refreshToken).status(StatusCodes.OK).json({
-    message: 'success',
-  });
+  return setRefreshToken(res, refreshToken).status(StatusCodes.OK);
 };
 
 /**
@@ -78,7 +92,6 @@ export const clearRefreshToken = <T>(res: Response<T>) => {
 /**
  * Deletes the refresh cookie from the database
  * @param req
- * @return true if already authenticated
  */
 export const removeRefreshTokenFromDB = async (req: Request) => {
   const token = req.cookies.jwt;
@@ -92,12 +105,101 @@ export const removeRefreshTokenFromDB = async (req: Request) => {
 };
 
 /**
+ * Retries and verifies the refresh token both on the expiry time and the structure
+ * @param req
+ */
+export const getVerifiedRefreshToken = async (req: Request) => {
+  const tokenRaw = req.cookies.jwt;
+  try {
+    const token = jwt.verify(tokenRaw, env.JWT_SECRET);
+
+    return {
+      parsedToken: await JWTSchema.parseAsync(token),
+      encodedToken: tokenRaw,
+    };
+  } catch (e) {
+    return null;
+  }
+};
+
+/**
+ * Method used to generate new auth tokens
+ * @param req
+ * @param res
+ */
+export const tokenController = async (req: Request, res: Response<TokenResponse>) => {
+  // Check if the request have attached refresh token
+  const tokenResult = await getVerifiedRefreshToken(req);
+
+  if (!tokenResult) {
+    clearRefreshToken(res);
+    return res.status(StatusCodes.UNAUTHORIZED).json({
+      error: getReasonPhrase(StatusCodes.UNAUTHORIZED),
+    });
+  }
+
+  const { parsedToken: refreshToken, encodedToken: tokenEncoded } = tokenResult;
+
+  // Check if the refresh token points to a valid user
+  const prisma = req.app.prisma;
+  const result = await prisma.user.findUnique({
+    where: {
+      id: refreshToken.userId,
+    },
+    select: {
+      login: true,
+      id: true,
+      activeToken: {
+        select: {
+          token: true,
+          expiresAt: true,
+        },
+      },
+    },
+  });
+
+  if (!result) {
+    clearRefreshToken(res);
+    return res.status(StatusCodes.UNAUTHORIZED).json({
+      error: getReasonPhrase(StatusCodes.UNAUTHORIZED),
+    });
+  }
+
+  // Check for token reuse
+  if (!result.activeToken.find((el) => el.token === tokenEncoded)) {
+    // Token was reused
+    // 1) Delete all refresh tokens for the context user
+    prisma.token.deleteMany({ where: { userId: refreshToken.userId } });
+    clearRefreshToken(res);
+    return res.status(StatusCodes.UNAUTHORIZED).json({
+      error: getReasonPhrase(StatusCodes.UNAUTHORIZED),
+    });
+  }
+
+  // Remove old token from db
+  await removeRefreshTokenFromDB(req);
+
+  const accessToken = createJWT({
+    userId: result.id,
+    type: 'access',
+  });
+
+  return (await sendRefreshToken(req, res, result))?.json({
+    message: 'success',
+    token: accessToken,
+  });
+};
+
+/**
  * Performs the logout action by removing the jwt token
  * @param req
  * @param res
  */
-export const logoutController = (req: Request, res: Response) => {
-  return clearRefreshToken(res).redirect('/');
+export const logoutController = async (req: Request, res: Response<LogoutResponse>) => {
+  await removeRefreshTokenFromDB(req);
+  return clearRefreshToken(res).json({
+    message: 'success',
+  });
 };
 
 /**
@@ -123,7 +225,9 @@ export const registerController = async (req: Request, res: Response<SignupRespo
     const model = new Users(req.app.prisma.user);
     const user = await model.register(signupRequest);
 
-    return await sendRefreshToken(req, res, user);
+    return (await sendRefreshToken(req, res, user))?.json({
+      message: 'success',
+    });
   } catch (e) {
     return res.status(StatusCodes.BAD_REQUEST).json({
       error: (e as Error).message,
@@ -154,7 +258,9 @@ export const loginController = async (req: Request, res: Response<SignupResponse
     const model = new Users(req.app.prisma.user);
     const user = await model.login(signupRequest);
 
-    return await sendRefreshToken(req, res, user);
+    return (await sendRefreshToken(req, res, user))?.json({
+      message: 'success',
+    });
   } catch (e: unknown) {
     return res.status(StatusCodes.BAD_REQUEST).json({
       error: 'Invalid login or password',
